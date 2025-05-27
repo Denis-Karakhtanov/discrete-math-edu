@@ -1,0 +1,20 @@
+# GUI (Tkinter — встроен в Python)
+
+# Работа с графиками
+matplotlib>=3.5
+
+# Работа с PostgreSQL
+psycopg2-binary>=2.9
+
+# Подключение к PostgreSQL
+psycopg2-binary>=2.9
+
+# Работа с таблицами и данными (опционально)
+pandas>=2.0
+
+# Анимации (опционально)
+manim==0.18.1
+
+# Красивые стили для Tkinter (опционально)
+# ttkbootstrap>=1.10.1
+

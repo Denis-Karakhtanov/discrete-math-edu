@@ -38,7 +38,7 @@ Discrete Math Edu — десктопное обучающее приложени
 Клонируйте репозиторий:
 
 ```
-git clone https://github.com/yourusername/discrete-math-edu.git
+git clone https://github.com/Denis-Karakhtanov/discrete-math-edu
 cd discrete-math-edu
 ```
 

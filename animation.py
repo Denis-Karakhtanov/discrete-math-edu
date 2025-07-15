@@ -1,16 +1,12 @@
 import tkinter as tk
-import random
-import time
-import math  # нужно для вращения
+import math
 
 class AnimationManager:
-    def __init__(self, app):
-        """Инициализация менеджера анимаций"""
-        self.app = app
+    def __init__(self, logger):
+        self.logger = logger
         self.canvas = None
 
     def animate_graph(self):
-        """Анимация построения графа"""
         window = tk.Toplevel()
         window.title("Анимация графа")
         window.geometry("600x600")
@@ -26,10 +22,9 @@ class AnimationManager:
         edges = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 0)]
         for i, (v1, v2) in enumerate(edges):
             self.canvas.after(1000 * (i + 1), lambda v1=v1, v2=v2: self.draw_edge(vertices[v1], vertices[v2]))
-        self.app.logger.log("Запущена анимация графа")
+        self.logger.log("Запущена анимация графа")
 
     def animate_set(self):
-        """Анимация множества"""
         window = tk.Toplevel()
         window.title("Анимация множества")
         window.geometry("600x600")
@@ -48,10 +43,9 @@ class AnimationManager:
             self.canvas.after(1000 * (i + 1), lambda x=x, y=y, label=label: self.draw_element(x, y, label, "blue"))
         for i, (x, y, label) in enumerate(set_b):
             self.canvas.after(1000 * (i + 4), lambda x=x, y=y, label=label: self.draw_element(x, y, label, "red"))
-        self.app.logger.log("Запущена анимация множества")
+        self.logger.log("Запущена анимация множества")
 
     def animate_logic(self):
-        """Анимация логической операции"""
         window = tk.Toplevel()
         window.title("Анимация логики")
         window.geometry("600x600")
@@ -69,10 +63,9 @@ class AnimationManager:
             b = (i // 2) % 2
             result = a and b
             self.canvas.after(1000 * (i + 1), lambda a=a, b=b, result=result: self.update_logic(a, b, result))
-        self.app.logger.log("Запущена анимация логики")
+        self.logger.log("Запущена анимация логики")
 
     def animate_circle_graph(self):
-        """Анимация вращающегося графа (в одном def)"""
         window = tk.Toplevel()
         window.title("Круговой граф")
         window.geometry("600x600")
@@ -121,20 +114,46 @@ class AnimationManager:
             self.canvas.after(50, update_loop)
 
         update_loop()
-        self.app.logger.log("Запущена круговая анимация графа")
+        self.logger.log("Запущена круговая анимация графа")
 
     def draw_edge(self, v1, v2):
-        """Рисование ребра"""
         self.canvas.create_line(v1[0], v1[1], v2[0], v2[1], fill="black", width=3)
 
     def draw_element(self, x, y, label, color):
-        """Рисование элемента множества"""
         self.canvas.create_oval(x - 10, y - 10, x + 10, y + 10, fill=color)
         self.canvas.create_text(x, y, text=label, font=("Arial", 10))
 
     def update_logic(self, a, b, result):
-        """Обновление логической анимации"""
         self.canvas.delete("logic")
         self.canvas.create_text(225, 225, text=f"A={a}", font=("Arial", 12), tags="logic")
         self.canvas.create_text(375, 225, text=f"B={b}", font=("Arial", 12), tags="logic")
         self.canvas.create_text(300, 300, text=f"Результат: {result}", font=("Arial", 14), tags="logic")
+
+def main():
+    root = tk.Tk()
+    root.title("Главное окно")
+    root.geometry("300x300")
+
+    class Logger:
+        def log(self, msg):
+            print(msg)
+
+    logger = Logger()
+    anim = AnimationManager(logger)
+
+    btn_graph = tk.Button(root, text="Анимация графа", command=anim.animate_graph)
+    btn_graph.pack(pady=10)
+
+    btn_set = tk.Button(root, text="Анимация множества", command=anim.animate_set)
+    btn_set.pack(pady=10)
+
+    btn_logic = tk.Button(root, text="Анимация логики", command=anim.animate_logic)
+    btn_logic.pack(pady=10)
+
+    btn_circle = tk.Button(root, text="Круговой граф (новая)", command=anim.animate_circle_graph)
+    btn_circle.pack(pady=10)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()

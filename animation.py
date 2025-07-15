@@ -91,9 +91,15 @@ class AnimationManager:
         for i in range(node_count):
             a = i
             b = (i + 1) % node_count
-            x1, y1, _, _ = self.canvas.coords(nodes[a])
-            x2, y2, _, _ = self.canvas.coords(nodes[b])
-            line = self.canvas.create_line(x1 + 10, y1 + 10, x2 + 10, y2 + 10, fill="gray", width=2)
+            x1_bbox, y1_bbox, x2_bbox, y2_bbox = self.canvas.coords(nodes[a])
+            x1_center = (x1_bbox + x2_bbox) / 2
+            y1_center = (y1_bbox + y2_bbox) / 2
+
+            x3_bbox, y3_bbox, x4_bbox, y4_bbox = self.canvas.coords(nodes[b])
+            x2_center = (x3_bbox + x4_bbox) / 2
+            y2_center = (y3_bbox + y4_bbox) / 2
+
+            line = self.canvas.create_line(x1_center, y1_center, x2_center, y2_center, fill="gray", width=2)
             lines.append(line)
 
         def update_loop():
@@ -107,9 +113,15 @@ class AnimationManager:
                 self.canvas.coords(nodes[i], x - 10, y - 10, x + 10, y + 10)
 
             for idx, (a, b) in enumerate([(i, (i + 1) % node_count) for i in range(node_count)]):
-                x1, y1, _, _ = self.canvas.coords(nodes[a])
-                x2, y2, _, _ = self.canvas.coords(nodes[b])
-                self.canvas.coords(lines[idx], x1 + 10, y1 + 10, x2 + 10, y2 + 10)
+                x1_bbox, y1_bbox, x2_bbox, y2_bbox = self.canvas.coords(nodes[a])
+                x1_center = (x1_bbox + x2_bbox) / 2
+                y1_center = (y1_bbox + y2_bbox) / 2
+
+                x3_bbox, y3_bbox, x4_bbox, y4_bbox = self.canvas.coords(nodes[b])
+                x2_center = (x3_bbox + x4_bbox) / 2
+                y2_center = (y3_bbox + y4_bbox) / 2
+
+                self.canvas.coords(lines[idx], x1_center, y1_center, x2_center, y2_center)
 
             self.canvas.after(50, update_loop)
 

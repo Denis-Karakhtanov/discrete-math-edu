@@ -85,3 +85,31 @@ class AnimationManager:
         self.canvas.create_text(225, 225, text=f"A={a}", font=("Arial", 12), tags="logic")
         self.canvas.create_text(375, 225, text=f"B={b}", font=("Arial", 12), tags="logic")
         self.canvas.create_text(300, 300, text=f"Результат: {result}", font=("Arial", 14), tags="logic")
+
+    def animate_circle_graph(self):
+    """Анимация вращающегося графа (в одном def)"""
+    import math
+
+    window = tk.Toplevel()
+    window.title("Круговой граф")
+    window.geometry("600x600")
+    self.canvas = tk.Canvas(window, width=600, height=600, bg="white")
+    self.canvas.pack()
+
+    radius = 200
+    center_x = 300
+    center_y = 300
+    node_count = 6
+    angle_step = 360 / node_count
+    angle_offset = 0
+    nodes = []
+    lines = []
+
+    for i in range(node_count):
+        angle = math.radians(i * angle_step)
+        x = center_x + radius * math.cos(angle)
+        y = center_y + radius * math.sin(angle)
+        node = self.canvas.create_oval(x - 10, y - 10, x + 10, y + 10, fill="green")
+        nodes.append(node)
+
+    

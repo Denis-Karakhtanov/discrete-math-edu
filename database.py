@@ -1,4 +1,3 @@
-
 # database.py
 import psycopg2
 import hashlib
@@ -7,6 +6,7 @@ from datetime import datetime
 class Database:
     def __init__(self):
         """Инициализация подключения к PostgreSQL"""
+        # Явная строка подключения
         conn_string = "dbname=postgres user=postgres password=4BQT6r0VVWjo host=localhost port=5432"
         try:
             self.conn = psycopg2.connect(conn_string)
@@ -106,68 +106,55 @@ class Database:
             if self.cursor.fetchone()[0] == 0:
                 self.cursor.execute("""
                     INSERT INTO users (login, password, role, name) VALUES
-                    (%s, %s, %s, %s),
-                    (%s, %s, %s, %s),
-                    (%s, %s, %s, %s)
-                """, (
-                    'admin', hashlib.sha256("admin123".encode()).hexdigest(), 'Администратор', 'Админ Админов',
-                    'teacher', hashlib.sha256("teacher123".encode()).hexdigest(), 'Преподаватель', 'Петр Петров',
-                    'student', hashlib.sha256("student123".encode()).hexdigest(), 'Студент', 'Иван Иванов'
-                ))
+                    ('admin', %s, 'Администратор', 'Админ Админов'),
+                    ('teacher', %s, 'Преподаватель', 'Петр Петров'),
+                    ('student', %s, 'Студент', 'Иван Иванов')
+                """, (hashlib.sha256("admin123".encode()).hexdigest(),
+                      hashlib.sha256("teacher123".encode()).hexdigest(),
+                      hashlib.sha256("student123".encode()).hexdigest()))
 
             # Проверка и вставка категорий
             self.cursor.execute("SELECT COUNT(*) FROM categories")
             if self.cursor.fetchone()[0] == 0:
                 self.cursor.execute("""
                     INSERT INTO categories (name) VALUES
-                    (%s), (%s), (%s), (%s)
-                """, ('Логика', 'Теория множеств', 'Графы', 'Комбинаторика'))
+                    ('Логика'), ('Теория множеств'), ('Графы'), ('Комбинаторика')
+                """)
 
             # Проверка и вставка материалов
             self.cursor.execute("SELECT COUNT(*) FROM materials")
             if self.cursor.fetchone()[0] == 0:
                 self.cursor.execute("""
                     INSERT INTO materials (topic, content, file_path, category) VALUES
-                    (%s, %s, %s, %s),
-                    (%s, %s, %s, %s),
-                    (%s, %s, %s, %s),
-                    (%s, %s, %s, %s)
-                """, (
-                    'Логика высказываний', 'Основы математической логики...', 'data/logic.jpg', 'Логика',
-                    'Операции над множествами', 'Множества и их свойства...', 'data/sets.mp4', 'Теория множеств',
-                    'Основы теории графов', 'Графы и их применение...', 'data/graph.png', 'Графы',
-                    'Комбинаторные задачи', 'Принципы подсчета...', 'data/combinatorics.pdf', 'Комбинаторика'
-                ))
+                    ('Логика высказываний', 'Основы математической логики...', 'data/logic.jpg', 'Логика'),
+                    ('Операции над множествами', 'Множества и их свойства...', 'data/sets.mp4', 'Теория множеств'),
+                    ('Основы теории графов', 'Графы и их применение...', 'data/graph.png', 'Графы'),
+                    ('Комбинаторные задачи', 'Принципы подсчета...', 'data/combinatorics.pdf', 'Комбинаторика')
+                """)
 
             # Проверка и вставка вопросов
             self.cursor.execute("SELECT COUNT(*) FROM questions")
             if self.cursor.fetchone()[0] == 0:
                 self.cursor.execute("""
                     INSERT INTO questions (topic, question, correct_answer, wrong_answers, question_type, category) VALUES
-                    (%s, %s, %s, %s, %s, %s),
-                    (%s, %s, %s, %s, %s, %s),
-                    (%s, %s, %s, %s, %s, %s),
-                    (%s, %s, %s, %s, %s, %s)
-                """, (
-                    'Логика высказываний', 'Что такое дизъюнкция?', 'Логическое ИЛИ',
-                    ['Логическое И', 'Логическое НЕ', 'Импликация'], 'Множественный выбор', 'Логика',
-                    'Операции над множествами', 'Что такое объединение множеств?', 'Все элементы обоих множеств',
-                    ['Пересечение', 'Разность', 'Дополнение'], 'Множественный выбор', 'Теория множеств',
-                    'Основы теории графов', 'Что такое вершина графа?', 'Точка в графе',
-                    ['Ребро', 'Цикл', 'Путь'], 'Множественный выбор', 'Графы',
-                    'Комбинаторные задачи', 'Сколько способов выбрать 3 книги из 5?', '10',
-                    [], 'Открытый вопрос', 'Комбинаторика'
-                ))
+                    ('Логика высказываний', 'Что такое дизъюнкция?', 'Логическое ИЛИ', 
+                     ARRAY['Логическое И', 'Логическое НЕ', 'Импликация'], 'Множественный выбор', 'Логика'),
+                    ('Операции над множествами', 'Что такое объединение множеств?', 'Все элементы обоих множеств', 
+                     ARRAY['Пересечение', 'Разность', 'Дополнение'], 'Множественный выбор', 'Теория множеств'),
+                    ('Основы теории графов', 'Что такое вершина графа?', 'Точка в графе', 
+                     ARRAY['Ребро', 'Цикл', 'Путь'], 'Множественный выбор', 'Графы'),
+                    ('Комбинаторные задачи', 'Сколько способов выбрать 3 книги из 5?', '10', 
+                     [], 'Открытый вопрос', 'Комбинаторика')
+                """)
 
             # Проверка и вставка прогресса пользователя
             self.cursor.execute("SELECT COUNT(*) FROM user_progress")
             if self.cursor.fetchone()[0] == 0:
                 self.cursor.execute("""
                     INSERT INTO user_progress (user_login, topic, progress) VALUES
-                    (%s, %s, %s),
-                    (%s, %s, %s)
-                """, ('student', 'Логика высказываний', 50, 'student', 'Операции над множествами', 70))
-
+                    ('student', 'Логика высказываний', 50),
+                    ('student', 'Операции над множествами', 70)
+                """)
             self.conn.commit()
             print("Тестовые данные успешно вставлены")
         except psycopg2.Error as e:

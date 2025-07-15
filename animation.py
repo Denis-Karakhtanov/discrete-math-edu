@@ -112,4 +112,30 @@ class AnimationManager:
         node = self.canvas.create_oval(x - 10, y - 10, x + 10, y + 10, fill="green")
         nodes.append(node)
 
-    
+    for i in range(node_count):
+        a = i
+        b = (i + 1) % node_count
+        x1, y1, _, _ = self.canvas.coords(nodes[a])
+        x2, y2, _, _ = self.canvas.coords(nodes[b])
+        line = self.canvas.create_line(x1 + 10, y1 + 10, x2 + 10, y2 + 10, fill="gray", width=2)
+        lines.append(line)
+
+    def update_loop():
+        nonlocal angle_offset
+        angle_offset = (angle_offset + 2) % 360
+
+        for i in range(node_count):
+            angle = math.radians(i * angle_step + angle_offset)
+            x = center_x + radius * math.cos(angle)
+            y = center_y + radius * math.sin(angle)
+            self.canvas.coords(nodes[i], x - 10, y - 10, x + 10, y + 10)
+
+        for idx, (a, b) in enumerate([(i, (i + 1) % node_count) for i in range(node_count)]):
+            x1, y1, _, _ = self.canvas.coords(nodes[a])
+            x2, y2, _, _ = self.canvas.coords(nodes[b])
+            self.canvas.coords(lines[idx], x1 + 10, y1 + 10, x2 + 10, y2 + 10)
+
+        self.canvas.after(50, update_loop)
+
+    update_loop()
+    self.app.logger.log("Запущена круговая анимация графа")

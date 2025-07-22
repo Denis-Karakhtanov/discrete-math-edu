@@ -33,3 +33,8 @@ class FileManager:
 
     def list_files(self):
         return [f for f in os.listdir(self.base_dir) if os.path.isfile(os.path.join(self.base_dir, f))]
+
+    def exists(self, file_name):
+        """Проверяет, существует ли файл в директории."""
+        return os.path.exists(os.path.join(self.base_dir, file_name))
+

@@ -7,12 +7,16 @@ class FileManager:
         if not os.path.exists(self.base_dir):
             os.makedirs(self.base_dir)
 
-    def save_file(self, source_path, destination_name):
+        def save_file(self, source_path, destination_name):
         if not os.path.exists(source_path):
             raise FileNotFoundError(f"Файл {source_path} не найден")
         destination_path = os.path.join(self.base_dir, destination_name)
-        shutil.copy(source_path, destination_path)
+        try:
+            shutil.copy(source_path, destination_path)
+        except Exception as e:
+            raise IOError(f"Ошибка при копировании: {e}")
         return destination_path
+
 
     def get_file_path(self, file_name):
         file_path = os.path.join(self.base_dir, file_name)
